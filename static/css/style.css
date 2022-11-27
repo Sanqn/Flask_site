@@ -480,6 +480,22 @@ color: #888;/* цвет текста серый */
 	box-shadow: none;
 }
 
-.msg {
-    color: red;
+.msg, .mess, .messe, .sub {
+    margin: 10px;
+    padding: 10px;
+}
+.msg.success {
+    border: 1px solid white;
+    background: green;
+    color: wheat;
+}   
+.msg.error {
+    border: 1px solid white;
+    background: red;
+    color: white;
+}
+
+.messt, .messm {
+    padding-left: 10px;
+    margin-left: 10px;
 }

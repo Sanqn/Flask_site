@@ -3,14 +3,14 @@
 {% block context %}
 <h1>Contact me</h1>
 <form action="/contacts" method="post">
-    {% for msg in get_flashed_messages() %}
-    <div class="msg">{{ msg }}</div>
+    {% for cat, msg in get_flashed_messages(True) %}
+    <div class="msg {{cat}}">{{ msg }}</div>
     {% endfor %}
-    <p><label>Name:</label> <input type="text" name="username" value="" required></p>
-    <p><label>Email:</label> <input type="text" name="email" value="" required></p>
-    <p><label>Message:</label></p>
-    <p><textarea name="message" rows=7 cols=40></textarea></p>
-    <p><input type="submit" value="Send"></p>
+    <div class="mess"><label>Name:</label> <input type="text" name="username" value="" required></div>
+    <div class="messe"><label>Email:</label> <input type="text" name="email" value="" required></div>
+    <div class="messm"><label>Message:</label></div>
+    <div class="messt"><textarea name="message" rows=7 cols=40></textarea></div>
+    <div class="sub"><input type="submit" value="Send"></div>
 </form>
 
 {% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block context %}
+<h1>Login</h1>
+<form action="/login" method="post">
+    <div class="mess"><label>Name:</label> <input type="text" name="username" value="" required></div>
+    <div class="messe"><label>Password:</label> <input type="text" name="password" value="" required></div>
+    <div class="sub"><input type="submit" value="Send"></div>
+</form>
+
+{% endblock %}
