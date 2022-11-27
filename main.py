@@ -53,9 +53,9 @@ def login():
     return render_template('login.html', title='Login', menu=menu)
 
 
-@app.route('/logout')
+@app.route("/logout")
 def logout():
-    session.pop('username', None)
+    del session['userLogged']
     return redirect(url_for('index'))
 
 
@@ -63,7 +63,6 @@ def logout():
 def profile(name):
     if 'userLogged' not in session or session['userLogged'] != name:
         abort(401)
-    print(url_for('profile', name='San'))
     return f'Hi {name}'
 
 
