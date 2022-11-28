@@ -64,7 +64,8 @@ def close_connection(exception):
 def index():
     db = get_db()
     dbase = FBbase(db)
-    return render_template('index.html', menu=dbase.menu())
+    all_post = dbase.get_all_post()
+    return render_template('index.html', menu=dbase.menu(), all_post=all_post)
 
 
 @app.route('/about')
@@ -116,7 +117,7 @@ def profile(name):
     return f'Hi {name}'
 
 
-@app.route('/addpost', methods=['GET', 'POST'])
+@app.route('/add_post', methods=['GET', 'POST'])
 def addpost():
     db = get_db()
     dbase = FBbase(db)

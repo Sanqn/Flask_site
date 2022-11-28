@@ -3,4 +3,14 @@
 {% block context %}
 <h1>{{ title }}</h1>
 <h2>Information</h2>
+<ul class="listpost">
+{% for post in all_post %}
+<h1>{{ post.title }}</h1>
+<li><a href="{{ url_for('post', id_post=post.id) }}">{{ post.title }}</a></li>
+<p>{{ post.text }}</p>
+<p>Post created: {{ post.time }}</p>
+<hr>
+{% endfor %}
+</ul>
+
 {% endblock %}

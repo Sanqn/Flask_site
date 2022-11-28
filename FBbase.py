@@ -40,3 +40,14 @@ class FBbase:
         except sqlite3.Error as e:
             print(f'Error {e}')
         return False
+
+    def get_all_post(self):
+        query = "SELECT * FROM posts ORDER BY time DESC;"
+        try:
+            self.__cur.execute(query)
+            res = self.__cur.fetchall()
+            if res:
+                return res
+        except sqlite3.Error as e:
+            print(f'Error {e}')
+        return False
