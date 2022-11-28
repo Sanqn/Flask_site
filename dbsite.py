@@ -44,11 +44,11 @@ def insert_data_in_table():
     op = [('1', 'Main', '/'),
           ('2', 'About', 'about'),
           ('3', 'Contacts', 'contacts'),
-          ('4', 'Login', 'login')]
-    query = """INSERT INTO menu(id, name, url) VALUES(?, ?, ?);"""
+          ('4', 'Add post', 'add_post'),
+          ('5', 'Login', 'login')]
+    query = """INSERT INTO mainmenu(id, name, url) VALUES(?, ?, ?);"""
     cur.executemany(query, op)
     # cur.execute("DELETE FROM menu;")
-    conn.commit()
     conn.commit()
     conn.close()
 
@@ -114,6 +114,36 @@ def profile(name):
     if 'userLogged' not in session or session['userLogged'] != name:
         abort(401)
     return f'Hi {name}'
+
+
+@app.route('/addpost', methods=['GET', 'POST'])
+def addpost():
+    db = get_db()
+    dbase = FBbase(db)
+    if request.method == 'POST':
+        if len(request.form['name']) > 2 and len(request.form['text']) > 5:
+            print(request.form)
+            name_post = request.form['name']
+            text_post = request.form['text']
+            res = dbase.addpost(name_post, text_post)
+            if not res:
+                flash('Post not save', category='error')
+            else:
+                flash('Post added successful', category='success')
+        else:
+            flash('Post not save', category='error')
+    return render_template('addpost.html', title='addpost', menu=dbase.menu())
+
+
+@app.route('/post/<int:id_post>')
+def post(id_post):
+    db = get_db()
+    dbase = FBbase(db)
+    article = dbase.get_post(id_post)
+    print(article)
+    if not article:
+        abort(404)
+    return render_template('post.html', article=dict(article), title=dict(article)['title'],  menu=dbase.menu())
 
 
 @app.errorhandler(404)

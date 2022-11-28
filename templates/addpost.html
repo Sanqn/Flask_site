@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block context %}
+<h1>Add post</h1>
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="msg {{cat}}">{{ msg }}</div>
+{% endfor %}
+<form action="{{ url_for('addpost') }}" method="post">
+    <div class="mess"><label>Title post:</label> <input type="text" name="name" value="" required></div>
+    <div class="messm"><label>Post:</label></div>
+    <div class="messt"><textarea name="text" rows=7 cols=40></textarea></div>
+    <div class="sub"><input type="submit" value="Add post"></div>
+</form>
+
+{% endblock %}
