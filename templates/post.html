@@ -2,7 +2,7 @@
 
 {% block context %}
 <h1>{{ article.title }}</h1>
-<p><img src="static/img/{{article.image}}"> </p>
+<p><img src="{{ article.image }}"> </p>
 <p>{{ article.text | safe }}</p>
 <p>Post created: {{ article.time }}</p>
 {% endblock %}

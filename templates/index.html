@@ -7,7 +7,7 @@
 {% for post in all_post %}
 <h1>{{ post.title }}</h1>
 <li><a href="{{ url_for('post', url_post=post.url) }}">{{ post.url }}</a></li>
-<p><img src="static/img/{{post.image}}"> </p>
+<p><img src="{{ post.image }}"> </p>
 <p>{{ post.text | safe }}</p>
 <p>Post created: {{ post.time }}</p>
 <hr>
