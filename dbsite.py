@@ -1,16 +1,14 @@
 import os
 import sqlite3
 from flask import g
-
 from flask import Flask, url_for, render_template, request, flash, session, redirect, abort
 from dotenv import load_dotenv, find_dotenv
 from FBbase import FBbase
 from werkzeug.utils import secure_filename
 
 load_dotenv(find_dotenv())
-
 DATABASE = '/tmp/fldb.db'
-UPLOAD_FOLDER = './static/img/'
+UPLOAD_FOLDER = 'static/img/'
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -136,6 +134,7 @@ def addpost():
             image = request.files['image']
             name_image = image.filename
             path_to_image = os.path.join(app.config['UPLOAD_FOLDER'], name_image)
+            print(path_to_image)
             if name_image != '':
                 ext_image = name_image.split('.')[-1]
                 if ext_image not in ALLOWED_EXTENSIONS:
@@ -159,7 +158,7 @@ def post(url_post):
     print(dict(article))
     if not article:
         abort(404)
-    return render_template('post.html', article=dict(article), title=dict(article)['title'], menu=dbase.menu())
+    return render_template('post.html', article=article, title=dict(article)['title'], menu=dbase.menu())
 
 
 @app.errorhandler(404)
