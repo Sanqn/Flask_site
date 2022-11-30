@@ -6,8 +6,9 @@
 <ul class="listpost">
 {% for post in all_post %}
 <h1>{{ post.title }}</h1>
-<li><a href="{{ url_for('post', id_post=post.id) }}">{{ post.title }}</a></li>
-<p>{{ post.text }}</p>
+<li><a href="{{ url_for('post', url_post=post.url) }}">{{ post.url }}</a></li>
+<p><img src="static/img/{{post.image}}"> </p>
+<p>{{ post.text | safe }}</p>
 <p>Post created: {{ post.time }}</p>
 <hr>
 {% endfor %}

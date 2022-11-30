@@ -65,6 +65,8 @@ def index():
     db = get_db()
     dbase = FBbase(db)
     all_post = dbase.get_all_post()
+    if not all_post:
+        return render_template('index.html', menu=dbase.menu())
     return render_template('index.html', menu=dbase.menu(), all_post=all_post)
 
 
@@ -125,8 +127,10 @@ def addpost():
         if len(request.form['name']) > 2 and len(request.form['text']) > 5:
             print(request.form)
             name_post = request.form['name']
+            url_post = request.form['url'].lower()
             text_post = request.form['text']
-            res = dbase.addpost(name_post, text_post)
+            image = request.form['image']
+            res = dbase.addpost(name_post, url_post, text_post, image)
             if not res:
                 flash('Post not save', category='error')
             else:
@@ -136,12 +140,12 @@ def addpost():
     return render_template('addpost.html', title='addpost', menu=dbase.menu())
 
 
-@app.route('/post/<int:id_post>')
-def post(id_post):
+@app.route('/post/<url_post>')
+def post(url_post):
     db = get_db()
     dbase = FBbase(db)
-    article = dbase.get_post(id_post)
-    print(article)
+    article = dbase.get_post(url_post)
+    print(dict(article))
     if not article:
         abort(404)
     return render_template('post.html', article=dict(article), title=dict(article)['title'],  menu=dbase.menu())

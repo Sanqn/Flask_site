@@ -18,20 +18,20 @@ class FBbase:
             print('Error {E}')
         return []
 
-    def addpost(self, title_post, text_post):
+    def addpost(self, title_post, url_post, text_post, image):
         tm = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        post = (title_post, text_post, tm)
-        query = """INSERT INTO posts(id, title, text, time) VALUES(Null, ?, ?, ?);"""
+        post = (title_post, text_post, url_post,  image, tm)
+        query = """INSERT INTO posts(id, title, text, url, image, time) VALUES(Null, ?, ?, ?, ?, ?);"""
         try:
             self.__cur.execute(query, post)
             self.__db.commit()
         except sqlite3.Error as e:
-            print(f'Error {e}')
+            print(f'Error {e} ==================')
             return False
         return True
 
-    def get_post(self, id):
-        query = f"SELECT * FROM posts WHERE id={id};"
+    def get_post(self, url_post):
+        query = f"SELECT * FROM posts WHERE url='{url_post}';"
         try:
             self.__cur.execute(query)
             res = self.__cur.fetchone()
