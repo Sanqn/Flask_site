@@ -62,8 +62,6 @@ def close_connection(exception):
         db.close()
 
 
-
-
 @app.route('/')
 def index():
     db = get_db()
@@ -113,6 +111,30 @@ def login():
         session['userLogged'] = request.form['username']
         return redirect(url_for('profile', name=session['userLogged']))
     return render_template('login.html', title='Login', menu=dbase.menu())
+
+
+@app.route('/log', methods=['GET', 'POST'])
+def log():
+    db = get_db()
+    dbase = FBbase(db)
+    if request.method == 'POST':
+        name = request.form['user']
+        pas = request.form['pass']
+        if name == 'Alex' and pas == 'admin':
+            logi = ''
+            if request.cookies.get('ld'):
+                logi = request.cookies.get('ld')
+            res = make_response(f'auth_user {logi}')
+            res.set_cookie('ld', str((name, pas)), 60 * 60)
+            return res
+    return render_template('login1.html', title='Log', menu=dbase.menu())
+
+
+@app.route("/logout_coo")
+def logout_coo():
+    res = make_response(f'Coolies cleared')
+    res.set_cookie('ld', '', max_age=0)
+    return res
 
 
 @app.route("/logout")
