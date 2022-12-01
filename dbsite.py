@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from flask import g
+from flask import g, make_response
 from flask import Flask, url_for, render_template, request, flash, session, redirect, abort
 from dotenv import load_dotenv, find_dotenv
 from FBbase import FBbase
@@ -8,7 +8,7 @@ from werkzeug.utils import secure_filename
 
 load_dotenv(find_dotenv())
 DATABASE = '/tmp/fldb.db'
-UPLOAD_FOLDER = 'static/img/'
+UPLOAD_FOLDER = '/static/img/'
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -62,6 +62,8 @@ def close_connection(exception):
         db.close()
 
 
+
+
 @app.route('/')
 def index():
     db = get_db()
@@ -70,6 +72,11 @@ def index():
     if not all_post:
         return render_template('index.html', menu=dbase.menu())
     return render_template('index.html', menu=dbase.menu(), all_post=all_post)
+    # content =  render_template('index.html', menu=dbase.menu(), all_post=all_post)
+    # res = make_response(content)
+    # res.headers['Content-type'] = 'text/plan'
+    # res.headers['Server'] = 'flask'
+    # return res
 
 
 @app.route('/about')

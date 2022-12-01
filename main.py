@@ -73,7 +73,3 @@
 #
 # if __name__ == '__main__':
 #     app.run(debug=True)
-import datetime
-import time
-
-print(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
