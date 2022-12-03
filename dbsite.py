@@ -1,3 +1,4 @@
+import datetime
 import os
 import sqlite3
 from flask import g, make_response
@@ -18,6 +19,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.debug = True
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'fldb.db')))
+
 
 
 def connect_db():
@@ -55,6 +57,17 @@ def insert_data_in_table():
     conn.close()
 
 
+dbase = None
+
+
+@app.before_request
+def before_request():
+    print('connect')
+    global dbase
+    db = get_db()
+    dbase = FBbase(db)
+
+
 @app.teardown_appcontext
 def close_connection(exception):
     db = getattr(g, 'link_db', None)
@@ -64,8 +77,6 @@ def close_connection(exception):
 
 @app.route('/')
 def index():
-    db = get_db()
-    dbase = FBbase(db)
     all_post = dbase.get_all_post()
     if not all_post:
         return render_template('index.html', menu=dbase.menu())
@@ -79,16 +90,12 @@ def index():
 
 @app.route('/about')
 def about():
-    db = get_db()
-    dbase = FBbase(db)
     print(url_for('about'))
     return render_template('about.html', title='About', menu=dbase.menu())
 
 
 @app.route('/contacts', methods=['GET', 'POST'])
 def contacts():
-    db = get_db()
-    dbase = FBbase(db)
     if request.method == 'POST':
         print(request.form)
         if len(request.form['message']):
@@ -102,58 +109,31 @@ def contacts():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    db = get_db()
-    dbase = FBbase(db)
     print(request.form)
-    if 'userLogged' in session:
-        return redirect(url_for('profile', name=session['userLogged']))
+    if 'username' in session:
+        print(request.headers)
+        return redirect(url_for('profile', name=session['username']))
     elif request.method == 'POST' and request.form['username'] == 'Alex' and request.form['password'] == 'admin':
-        session['userLogged'] = request.form['username']
-        return redirect(url_for('profile', name=session['userLogged']))
+        session['username'] = request.form['username']
+        return redirect(url_for('profile', name=session['username']))
     return render_template('login.html', title='Login', menu=dbase.menu())
-
-
-@app.route('/log', methods=['GET', 'POST'])
-def log():
-    db = get_db()
-    dbase = FBbase(db)
-    if request.method == 'POST':
-        name = request.form['user']
-        pas = request.form['pass']
-        if name == 'Alex' and pas == 'admin':
-            logi = ''
-            if request.cookies.get('ld'):
-                logi = request.cookies.get('ld')
-            res = make_response(f'auth_user {logi}')
-            res.set_cookie('ld', str((name, pas)), 60 * 60)
-            return res
-    return render_template('login1.html', title='Log', menu=dbase.menu())
-
-
-@app.route("/logout_coo")
-def logout_coo():
-    res = make_response(f'Coolies cleared')
-    res.set_cookie('ld', '', max_age=0)
-    return res
 
 
 @app.route("/logout")
 def logout():
-    del session['userLogged']
+    del session['username']
     return redirect(url_for('index'))
 
 
 @app.route('/profile/<name>')
 def profile(name):
-    if 'userLogged' not in session or session['userLogged'] != name:
+    if 'username' not in session or session['username'] != name:
         abort(401)
     return f'Hi {name}'
 
 
 @app.route('/add_post', methods=['GET', 'POST'])
 def addpost():
-    db = get_db()
-    dbase = FBbase(db)
     if request.method == 'POST':
         if len(request.form['name']) > 2 and len(request.form['text']) > 5:
             print(request.form)
@@ -181,8 +161,6 @@ def addpost():
 
 @app.route('/post/<url_post>')
 def post(url_post):
-    db = get_db()
-    dbase = FBbase(db)
     article = dbase.get_post(url_post)
     print(dict(article))
     if not article:
@@ -190,10 +168,60 @@ def post(url_post):
     return render_template('post.html', article=article, title=dict(article)['title'], menu=dbase.menu())
 
 
+@app.route('/visits-counter')
+def visits():
+    if 'visits' in session:
+        session['visits'] = session.get('visits') + 1
+    else:
+        session['visits'] = 1
+    return f'Total visits {session.get("visits")}'
+
+
+@app.route('/update_data')
+def up_data():
+    res = str(session.items())
+
+    cart_item = {'pineapples': '10', 'apples': '20', 'mangoes': '30'}
+    if 'cart_item' in session:
+        session['cart_item']['apples'] += 200
+        session.modified = True
+    else:
+        session['cart_item'] = cart_item
+    return res
+
+
+@app.route('/delete-visits/')
+def delete_visits():
+    session.pop('visits', None)  # удаление данных о посещениях
+    session.pop('cart_item', None)  # удаление данных о посещениях
+    return 'Visits deleted'
+
+
+@app.route('/cookie', methods=['GET', 'POST'])
+def log():
+    if not request.cookies.get('foo'):
+        if request.method == 'POST':
+            name = request.form['user']
+            pas = request.form['pass']
+            if name == 'Alex' and pas == 'admin':
+                res = make_response(f'Cookies are created')
+                res.set_cookie('foo', str((name, pas)), 60 * 60)
+                return res
+    else:
+        res = make_response(f'Cookie is exists {request.cookies.get("foo")}')
+        return res
+    return render_template('login1.html', title='Cookie', menu=dbase.menu())
+
+
+@app.route('/kill_cookie')
+def kill_cookie():
+    res = make_response(f'Cookies are killed')
+    res.set_cookie('foo', max_age=0)
+    return res
+
+
 @app.errorhandler(404)
 def page_404(error):
-    db = get_db()
-    dbase = FBbase(db)
     return render_template('page_404.html', title='Error 404', menu=dbase.menu())
 
 
