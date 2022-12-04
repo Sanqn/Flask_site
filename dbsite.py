@@ -139,7 +139,7 @@ def registration():
                 print(session['username'])
                 return redirect(url_for('profile', name=session['username']))
             else:
-                flash('User not save', category='error')
+                flash('Email exists or password introduced incorrectly', category='error')
         else:
             flash('Data entered incorrectly', category='error')
 
