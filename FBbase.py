@@ -1,5 +1,6 @@
 import datetime
 import sqlite3
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 class FBbase:
@@ -20,7 +21,7 @@ class FBbase:
 
     def addpost(self, title_post, url_post, text_post, image):
         tm = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        post = (title_post, text_post, url_post,  image, tm)
+        post = (title_post, text_post, url_post, image, tm)
         query = """INSERT INTO posts(id, title, text, url, image, time) VALUES(Null, ?, ?, ?, ?, ?);"""
         try:
             self.__cur.execute(query, post)
@@ -29,6 +30,37 @@ class FBbase:
             print(f'Error {e} ==================')
             return False
         return True
+
+    def adduser(self, name, email, psw):
+        tm = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        user = (name, email, psw, tm)
+        query = """INSERT INTO users(id, name, email, psw, time) VALUES(Null, ?, ?, ?, ?);"""
+        try:
+            self.__cur.execute(query, user)
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print(f'Error {e} ==================')
+            return False
+        return True
+
+    def check_user(self, email, pasw_user):
+        query = f"SELECT name, psw FROM users WHERE email='{email}';"
+        try:
+            self.__cur.execute(query)
+            res = self.__cur.fetchone()
+            if res == None:
+                return False
+            else:
+                res = dict(res)
+                check_psw = check_password_hash(res['psw'], pasw_user)
+                if check_psw:
+                    print(res['name'])
+                    return res['name']
+                else:
+                    return False
+        except sqlite3.Error as e:
+            print(f'Error {e}')
+        return False
 
     def get_post(self, url_post):
         query = f"SELECT * FROM posts WHERE url='{url_post}';"

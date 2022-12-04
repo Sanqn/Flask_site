@@ -2,10 +2,18 @@
 
 {% block context %}
 <h1>Login</h1>
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="msg {{cat}}">{{ msg }}</div>
+{% endfor %}
 <form action="/login" method="post">
-    <div class="mess"><label>Name:</label> <input type="text" name="username" value="" required></div>
+    <div class="main">
+    <div class="mess"><label>Email:</label> <input type="email" name="email" value="" required></div>
     <div class="messe"><label>Password:</label> <input type="text" name="password" value="" required></div>
+    <div class="checkb"><input type="checkbox" name="rememberme" value="" required>Remember me</div>
     <div class="sub"><input type="submit" value="Send"></div>
+    <hr>
+    <div class="reg"><a href="{{ url_for('registration') }}">Registration</a></div>
+    </div>
 </form>
 
 {% endblock %}

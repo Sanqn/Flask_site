@@ -6,6 +6,7 @@ from flask import Flask, url_for, render_template, request, flash, session, redi
 from dotenv import load_dotenv, find_dotenv
 from FBbase import FBbase
 from werkzeug.utils import secure_filename
+from werkzeug.security import check_password_hash, generate_password_hash
 
 load_dotenv(find_dotenv())
 DATABASE = '/tmp/fldb.db'
@@ -19,7 +20,6 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.debug = True
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'fldb.db')))
-
 
 
 def connect_db():
@@ -113,10 +113,37 @@ def login():
     if 'username' in session:
         print(request.headers)
         return redirect(url_for('profile', name=session['username']))
-    elif request.method == 'POST' and request.form['username'] == 'Alex' and request.form['password'] == 'admin':
-        session['username'] = request.form['username']
-        return redirect(url_for('profile', name=session['username']))
+    elif request.method == 'POST':
+        email = request.form['email']
+        pasw_user = request.form['password']
+        username = dbase.check_user(email, pasw_user)
+        print(username, '=========================')
+        if username:
+            session['username'] = username
+            return redirect(url_for('profile', name=session['username']))
+        else:
+            flash('Data entered incorrectly one', category='error')
     return render_template('login.html', title='Login', menu=dbase.menu())
+
+
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    if request.method == 'POST':
+        if len(request.form['username']) > 2 and request.form['password'] == request.form['repassword']:
+            name = request.form['username']
+            email = request.form['email']
+            hash_psw = generate_password_hash(request.form['password'])
+            res = dbase.adduser(name, email, hash_psw)
+            if res:
+                session['username'] = request.form['username']
+                print(session['username'])
+                return redirect(url_for('profile', name=session['username']))
+            else:
+                flash('User not save', category='error')
+        else:
+            flash('Data entered incorrectly', category='error')
+
+    return render_template('registration.html', title='Registration', menu=dbase.menu())
 
 
 @app.route("/logout")

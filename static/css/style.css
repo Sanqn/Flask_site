@@ -480,10 +480,9 @@ color: #888;/* цвет текста серый */
 	box-shadow: none;
 }
 
-.msg, .mess, .messe, .messu, .sub {
-    margin: 10px;
-    padding: 10px;
-}
+.mess, .messe, .messu, .remess, .messem {clear:both; text-align:right; line-height:25px;}
+label {float:left; padding:5px;}
+.main {float:left}
 .msg.success {
     border: 1px solid white;
     background: green;
@@ -495,7 +494,7 @@ color: #888;/* цвет текста серый */
     color: white;
 }
 
-.messt, .messm {
-    padding-left: 10px;
-    margin-left: 10px;
+.messt, .messm, .sub, .reg, .checkb {
+    padding-left: 5px;
+    margin-left: 5px;
 }
