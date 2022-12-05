@@ -76,14 +76,14 @@ class FBbase:
         return False
 
     def getUser(self, user_id):
-        query = f"SELECT name, psw FROM users WHERE id='{user_id}';"
+        query = f"SELECT * FROM users WHERE id='{user_id}';"
         try:
             self.__cur.execute(query)
             res = self.__cur.fetchone()
             if not res:
                 print('User not found')
                 return False
-            return True
+            return res
         except sqlite3.Error as e:
             print(f'Error {e}')
         return False

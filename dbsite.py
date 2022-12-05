@@ -7,7 +7,7 @@ from dotenv import load_dotenv, find_dotenv
 from FBbase import FBbase
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask_login import LoginManager, login_user, login_required, logout_user
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from UserLogin import UserLogin
 
 load_dotenv(find_dotenv())
@@ -141,7 +141,7 @@ def login():
         if username and check_password_hash(username['psw'], request.form['password']):
             userLogin = UserLogin().create(username)
             login_user(userLogin)
-            return redirect(url_for('index'))
+            return redirect(url_for('userprofile'))
         flash('Data entered incorrectly one', category='error')
     return render_template('login.html', title='Login', menu=dbase.menu())
 
@@ -183,6 +183,13 @@ def profile(name):
     if 'username' not in session or session['username'] != name:
         abort(401)
     return f'Hi {name}'
+
+@app.route('/userprofile')
+def userprofile():
+    print(current_user.get_id())
+    return f'''<p><a href="{url_for("logout1")}">Logout</a></p> 
+               <p>user id: {current_user.get_id()}</p>'''
+
 
 
 @app.route('/add_post', methods=['GET', 'POST'])
