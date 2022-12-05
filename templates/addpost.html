@@ -6,12 +6,14 @@
 <div class="msg {{cat}}">{{ msg }}</div>
 {% endfor %}
 <form action="{{ url_for('addpost') }}" enctype="multipart/form-data" method="post">
-    <div class="mess"><label>Title post:</label> <input type="text" name="name" value="" required></div>
-    <div class="messu"><label>Url post:</label> <input type="text" name="url" value="" required></div>
-    <div class="messu"><label>Image:</label> <input type="file" name="image" value="" required></div>
-    <div class="messm"><label>Post:</label></div>
-    <div class="messt"><textarea name="text" rows=7 cols=40></textarea></div>
+    <div class="main">
+    <div class="tpost"><label>Title post:</label> <input type="text" name="name" value="" required></div>
+    <div class="urlpost"><label>Url post:</label> <input type="text" name="url" value="" required></div>
+    <div class="image"><label>Image:</label> <input type="file" name="image" value="" required></div>
+    <div class="post"><label>Post:</label></div>
+    <div class="text_post"><textarea name="text" rows=7 cols=40></textarea></div>
     <div class="sub"><input type="submit" value="Add post"></div>
+    </div>
 </form>
 
 {% endblock %}

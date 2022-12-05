@@ -6,11 +6,13 @@
     {% for cat, msg in get_flashed_messages(True) %}
     <div class="msg {{cat}}">{{ msg }}</div>
     {% endfor %}
+    <div class="main">
     <div class="mess"><label>Name:</label> <input type="text" name="username" value="" required></div>
     <div class="messe"><label>Email:</label> <input type="text" name="email" value="" required></div>
     <div class="messm"><label>Message:</label></div>
     <div class="messt"><textarea name="message" rows=7 cols=40></textarea></div>
     <div class="sub"><input type="submit" value="Send"></div>
+    </div>
 </form>
 
 {% endblock %}

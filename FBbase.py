@@ -62,6 +62,32 @@ class FBbase:
             print(f'Error {e}')
         return False
 
+    def getUserbyEmail(self, email):
+        query = f"SELECT * FROM users WHERE email='{email}';"
+        try:
+            self.__cur.execute(query)
+            res = self.__cur.fetchone()
+            if not res:
+                print('User not found')
+                return False
+            return res
+        except sqlite3.Error as e:
+            print(f'Error {e}')
+        return False
+
+    def getUser(self, user_id):
+        query = f"SELECT name, psw FROM users WHERE id='{user_id}';"
+        try:
+            self.__cur.execute(query)
+            res = self.__cur.fetchone()
+            if not res:
+                print('User not found')
+                return False
+            return True
+        except sqlite3.Error as e:
+            print(f'Error {e}')
+        return False
+
     def get_post(self, url_post):
         query = f"SELECT * FROM posts WHERE url='{url_post}';"
         try:

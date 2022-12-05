@@ -7,6 +7,8 @@ from dotenv import load_dotenv, find_dotenv
 from FBbase import FBbase
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_login import LoginManager, login_user, login_required, logout_user
+from UserLogin import UserLogin
 
 load_dotenv(find_dotenv())
 DATABASE = '/tmp/fldb.db'
@@ -20,6 +22,12 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.debug = True
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'fldb.db')))
+login_manager = LoginManager(app)
+
+@login_manager.user_loader
+def load_user(user_id):
+    print('load_user')
+    return UserLogin().fromDB(user_id, dbase)
 
 
 def connect_db():
@@ -107,23 +115,41 @@ def contacts():
     return render_template('contacts.html', title='Contacts', menu=dbase.menu())
 
 
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     print(request.form)
+#     if 'username' in session:
+#         print(request.headers)
+#         return redirect(url_for('profile', name=session['username']))
+#     elif request.method == 'POST':
+#         email = request.form['email']
+#         pasw_user = request.form['password']
+#         username = dbase.check_user(email, pasw_user)
+#         print(username, '=========================')
+#         if username:
+#             session['username'] = username
+#             return redirect(url_for('profile', name=session['username']))
+#         else:
+#             flash('Data entered incorrectly one', category='error')
+#     return render_template('login.html', title='Login', menu=dbase.menu())
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    print(request.form)
-    if 'username' in session:
-        print(request.headers)
-        return redirect(url_for('profile', name=session['username']))
-    elif request.method == 'POST':
+    if request.method == 'POST':
         email = request.form['email']
-        pasw_user = request.form['password']
-        username = dbase.check_user(email, pasw_user)
-        print(username, '=========================')
-        if username:
-            session['username'] = username
-            return redirect(url_for('profile', name=session['username']))
-        else:
-            flash('Data entered incorrectly one', category='error')
+        username = dbase.getUserbyEmail(email)
+        if username and check_password_hash(username['psw'], request.form['password']):
+            userLogin = UserLogin().create(username)
+            login_user(userLogin)
+            return redirect(url_for('index'))
+        flash('Data entered incorrectly one', category='error')
     return render_template('login.html', title='Login', menu=dbase.menu())
+
+@app.route("/logout1")
+@login_required
+def logout1():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -187,6 +213,7 @@ def addpost():
 
 
 @app.route('/post/<url_post>')
+@login_required
 def post(url_post):
     article = dbase.get_post(url_post)
     print(dict(article))
