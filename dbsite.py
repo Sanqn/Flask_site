@@ -23,6 +23,9 @@ app.debug = True
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'fldb.db')))
 login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message = 'Please log in to access this page.'
+login_manager.login_message_category = 'success'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -103,6 +106,7 @@ def about():
 
 
 @app.route('/contacts', methods=['GET', 'POST'])
+@login_required
 def contacts():
     if request.method == 'POST':
         print(request.form)
@@ -135,13 +139,16 @@ def contacts():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('userprofile'))
     if request.method == 'POST':
         email = request.form['email']
         username = dbase.getUserbyEmail(email)
         if username and check_password_hash(username['psw'], request.form['password']):
             userLogin = UserLogin().create(username)
-            login_user(userLogin)
-            return redirect(url_for('userprofile'))
+            rm = True if request.form.get('rememberme') else False
+            login_user(userLogin, remember=rm)
+            return redirect(request.args.get('next') or url_for('userprofile'))
         flash('Data entered incorrectly one', category='error')
     return render_template('login.html', title='Login', menu=dbase.menu())
 
@@ -149,7 +156,8 @@ def login():
 @login_required
 def logout1():
     logout_user()
-    return redirect(url_for('index'))
+    flash('You are logout', category='success')
+    return redirect(url_for('login'))
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -186,13 +194,13 @@ def profile(name):
 
 @app.route('/userprofile')
 def userprofile():
-    print(current_user.get_id())
-    return f'''<p><a href="{url_for("logout1")}">Logout</a></p> 
-               <p>user id: {current_user.get_id()}</p>'''
+    id_user = current_user.get_id()
+    return render_template('userprofile.html', id_user=id_user, title='User_profile', menu=dbase.menu())
 
 
 
 @app.route('/add_post', methods=['GET', 'POST'])
+@login_required
 def addpost():
     if request.method == 'POST':
         if len(request.form['name']) > 2 and len(request.form['text']) > 5:

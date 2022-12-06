@@ -5,7 +5,7 @@
 {% for cat, msg in get_flashed_messages(True) %}
 <div class="msg {{cat}}">{{ msg }}</div>
 {% endfor %}
-<form action="/login" method="post">
+<form action="" method="post">
     <div class="main">
     <div class="mess"><label>Email:</label> <input type="email" name="email" value="" required></div>
     <div class="messe"><label>Password:</label> <input type="text" name="password" value="" required></div>

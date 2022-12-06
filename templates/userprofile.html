@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block context %}
+<h1>User information</h1>
+<h2>Your id: {{ id_user }}</h2>
+<hr>
+<p><a href="{{ url_for('logout1') }}">Logout</a></p>
+{% endblock %}
