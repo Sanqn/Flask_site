@@ -199,7 +199,6 @@ def userprofile():
     id_user = current_user.get_id()
     if request.method == 'POST':
         if current_user.is_authenticated:
-            id_user = current_user.get_id()
             image = request.files['image']
             name_ava = image.filename
             path_to_image = os.path.join(app.config['UPLOAD_FOLDER'], name_ava)
