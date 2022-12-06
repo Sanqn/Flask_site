@@ -12,7 +12,8 @@ from UserLogin import UserLogin
 
 load_dotenv(find_dotenv())
 DATABASE = '/tmp/fldb.db'
-UPLOAD_FOLDER = '/static/img/'
+UPLOAD_FOLDER = 'img/'
+
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -22,6 +23,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.debug = True
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'fldb.db')))
+app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message = 'Please log in to access this page.'
@@ -56,14 +58,14 @@ def get_db():
 def insert_data_in_table():
     conn = connect_db()
     cur = conn.cursor()
-    op = [('1', 'Main', '/'),
-          ('2', 'About', 'about'),
-          ('3', 'Contacts', 'contacts'),
-          ('4', 'Add post', 'add_post'),
-          ('5', 'Login', 'login')]
-    query = """INSERT INTO mainmenu(id, name, url) VALUES(?, ?, ?);"""
-    cur.executemany(query, op)
-    # cur.execute("DELETE FROM menu;")
+    # op = [('1', 'Main', '/'),
+    #       ('2', 'About', 'about'),
+    #       ('3', 'Contacts', 'contacts'),
+    #       ('4', 'Add post', 'add_post'),
+    #       ('5', 'Login', 'login')]
+    # query = """INSERT INTO mainmenu(id, name, url) VALUES(?, ?, ?);"""
+    # cur.executemany(query, op)
+    cur.execute("DELETE FROM posts WHERE id=3;")
     conn.commit()
     conn.close()
 
@@ -192,9 +194,25 @@ def profile(name):
         abort(401)
     return f'Hi {name}'
 
-@app.route('/userprofile')
+@app.route('/userprofile', methods=['GET', 'POST'])
 def userprofile():
     id_user = current_user.get_id()
+    if request.method == 'POST':
+        if current_user.is_authenticated:
+            id_user = current_user.get_id()
+            image = request.files['image']
+            name_ava = image.filename
+            path_to_image = os.path.join(app.config['UPLOAD_FOLDER'], name_ava)
+            if name_ava != '':
+                ext_image = name_ava.split('.')[-1]
+                if ext_image not in ALLOWED_EXTENSIONS:
+                    abort(400)
+                image.save(os.path.join('static/' + app.config['UPLOAD_FOLDER'], name_ava))
+            res = dbase.addava(id_user, path_to_image)
+            if not res:
+                flash('Ava not save', category='error')
+            else:
+                flash('Ava added successful', category='success')
     return render_template('userprofile.html', id_user=id_user, title='User_profile', menu=dbase.menu())
 
 
@@ -216,7 +234,7 @@ def addpost():
                 ext_image = name_image.split('.')[-1]
                 if ext_image not in ALLOWED_EXTENSIONS:
                     abort(400)
-                image.save(os.path.join(app.config['UPLOAD_FOLDER'], name_image))
+                image.save(os.path.join('static/' + app.config['UPLOAD_FOLDER'], name_image))
             res = dbase.addpost(name_post, url_post, text_post, path_to_image)
             if not res:
                 flash('Post not save', category='error')

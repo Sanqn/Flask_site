@@ -43,6 +43,16 @@ class FBbase:
             return False
         return True
 
+    def addava(self, id_user, ava):
+        query = f"UPDATE users SET avatar = '{ava}' WHERE id = '{id_user}';"
+        try:
+            self.__cur.execute(query)
+            self.__db.commit()
+        except sqlite3.Error as e:
+            print(f'Error {e} ==================')
+            return False
+        return True
+
     def check_user(self, email, pasw_user):
         query = f"SELECT name, psw FROM users WHERE email='{email}';"
         try:
