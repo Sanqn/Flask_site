@@ -74,6 +74,5 @@
 # if __name__ == '__main__':
 #     app.run(debug=True)
 
-a = {'name': 'Alex1', 'psw': 'pbkdf2:sha256:260000$msw0MygIb970ucnW$cd3dc708af26a2765947bbb9e5f6e86637d957123245a0da7994b5e6f821dcb5'}
 
 

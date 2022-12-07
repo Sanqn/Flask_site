@@ -311,5 +311,12 @@ def page_404(error):
     return render_template('page_404.html', title='Error 404', menu=dbase.menu())
 
 
+def getAvatar():
+    ava = (os.path.join('static/' + app.config['UPLOAD_FOLDER'], 'back_ava.png'))
+    return ava
+
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
