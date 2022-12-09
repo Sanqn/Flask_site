@@ -9,6 +9,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from UserLogin import UserLogin
+from forms import LoginForm
 
 load_dotenv(find_dotenv())
 DATABASE = '/tmp/fldb.db'
