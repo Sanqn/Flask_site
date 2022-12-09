@@ -144,16 +144,28 @@ def contacts():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('userprofile'))
-    if request.method == 'POST':
-        email = request.form['email']
+# With wtf_form =============================================================================
+    form = LoginForm()
+    if form.validate_on_submit():
+        email = form.email.data
         username = dbase.getUserbyEmail(email)
-        if username and check_password_hash(username['psw'], request.form['password']):
+        if username and check_password_hash(username['psw'], form.psw.data):
             userLogin = UserLogin().create(username)
-            rm = True if request.form.get('rememberme') else False
+            rm = form.remember.data
             login_user(userLogin, remember=rm)
             return redirect(request.args.get('next') or url_for('userprofile'))
-        flash('Data entered incorrectly one', category='error')
-    return render_template('login.html', title='Login', menu=dbase.menu())
+    return render_template('login_with_form.html', title='Login', menu=dbase.menu(), form=form)
+# =============================================================================================
+    # if request.method == 'POST':
+    #     email = request.form['email']
+    #     username = dbase.getUserbyEmail(email)
+    #     if username and check_password_hash(username['psw'], request.form['password']):
+    #         userLogin = UserLogin().create(username)
+    #         rm = True if request.form.get('rememberme') else False
+    #         login_user(userLogin, remember=rm)
+    #         return redirect(request.args.get('next') or url_for('userprofile'))
+    #     flash('Data entered incorrectly one', category='error')
+    # return render_template('login.html', title='Login', menu=dbase.menu())
 
 @app.route("/logout1")
 @login_required

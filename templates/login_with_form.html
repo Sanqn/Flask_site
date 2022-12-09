@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block context %}
+<h1>Login</h1>
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="msg {{cat}}">{{ msg }}</div>
+{% endfor %}
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <div class="main">
+        <p>{{ form.email.label() }} {{ form.email() }}</p>
+        <p>{{ form.psw.label }} {{ form.psw }}</p>
+        <p>{{ form.remember.label }} {{ form.remember }}</p>
+        <p>{{ form.sub }}</p>
+    <hr>
+    <div class="reg"><a href="{{ url_for('registration') }}">Registration</a></div>
+    </div>
+</form>
+
+{% endblock %}
