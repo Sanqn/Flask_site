@@ -144,7 +144,7 @@ def contacts():
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('userprofile'))
-# With wtf_form =============================================================================
+# With wtf_form ==============================================================================
     form = LoginForm()
     if form.validate_on_submit():
         email = form.email.data
