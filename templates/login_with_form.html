@@ -8,12 +8,26 @@
 <form action="" method="post">
     {{ form.hidden_tag() }}
     <div class="main">
-        <p>{{ form.email.label() }} {{ form.email() }}</p>
-        <p>{{ form.psw.label }} {{ form.psw }}</p>
+        <p>{{ form.email.label() }}
+            {% if form.email.errors %}
+            {% for e in form.email.errors %}
+            {{ e }}
+            {% endfor %}
+            {% else %}
+            {{ form.email() }}</p>
+        {% endif %}
+        <p>{{ form.psw.label }}
+            {% if form.psw.errors %}
+            {% for p in form.psw.errors %}
+            {{ p }}
+            {% endfor %}
+            {% else %}
+            {{ form.psw() }}</p>
+        {% endif %}
         <p>{{ form.remember.label }} {{ form.remember }}</p>
         <p>{{ form.sub }}</p>
-    <hr>
-    <div class="reg"><a href="{{ url_for('registration') }}">Registration</a></div>
+        <hr>
+        <div class="reg"><a href="{{ url_for('registration') }}">Registration</a></div>
     </div>
 </form>
 
