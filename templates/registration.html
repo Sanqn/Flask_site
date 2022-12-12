@@ -11,14 +11,16 @@
         {% for field in form if field.name not in ['csrf_token', 'sub']  -%}
             <p>{{ field.label() }}
             {% if field.errors %}
+            <span>
             {% for e in field.errors %}
             {{ e }}
             {% endfor %}
+            </span>
             {% else %}
-            {{ field }}
+            {{ field() }}
             {% endif %}
         {% endfor %}
-        <p>{{ form.sub }}</p>
+        <p>{{ form.sub() }}</p>
     </div>
 <!--    <div class="main">-->
 <!--    <div class="mess"><label>Name:</label> <input type="text" name="username" value="" required></div>-->
