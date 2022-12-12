@@ -6,13 +6,27 @@
 <div class="msg {{cat}}">{{ msg }}</div>
 {% endfor %}
 <form action="/registration" method="post">
+{{ form.hidden_tag() }}
     <div class="main">
-    <div class="mess"><label>Name:</label> <input type="text" name="username" value="" required></div>
-    <div class="messem"><label>Email:</label> <input type="email" name="email" value="" required></div>
-    <div class="messe"><label>Password:</label> <input type="password" name="password" value="" required></div>
-    <div class="remess"><label>Repeat Password:</label> <input type="password" name="repassword" value="" required></div>
-    <br>
-    <div class="sub"><input type="submit" value="Send"></div>
+        {% for field in form if field.name not in ['csrf_token', 'sub']  -%}
+            <p>{{ field.label() }}
+            {% if field.errors %}
+            {% for e in field.errors %}
+            {{ e }}
+            {% endfor %}
+            {% else %}
+            {{ field }}
+            {% endif %}
+        {% endfor %}
+        <p>{{ form.sub }}</p>
     </div>
+<!--    <div class="main">-->
+<!--    <div class="mess"><label>Name:</label> <input type="text" name="username" value="" required></div>-->
+<!--    <div class="messem"><label>Email:</label> <input type="email" name="email" value="" required></div>-->
+<!--    <div class="messe"><label>Password:</label> <input type="password" name="password" value="" required></div>-->
+<!--    <div class="remess"><label>Repeat Password:</label> <input type="password" name="repassword" value="" required></div>-->
+<!--    <br>-->
+<!--    <div class="sub"><input type="submit" value="Send"></div>-->
+<!--    </div>-->
 </form>
 {% endblock %}

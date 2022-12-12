@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from UserLogin import UserLogin
-from forms import LoginForm
+from forms import LoginForm, RegistrForm
 
 load_dotenv(find_dotenv())
 DATABASE = '/tmp/fldb.db'
@@ -177,22 +177,36 @@ def logout1():
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
-    if request.method == 'POST':
-        if len(request.form['username']) > 2 and request.form['password'] == request.form['repassword']:
-            name = request.form['username']
-            email = request.form['email']
-            hash_psw = generate_password_hash(request.form['password'])
-            res = dbase.adduser(name, email, hash_psw)
-            if res:
-                session['username'] = request.form['username']
-                print(session['username'])
-                return redirect(url_for('profile', name=session['username']))
-            else:
-                flash('Email exists or password introduced incorrectly', category='error')
+    # With wtf_form ==============================================================================
+    form = RegistrForm()
+    if form.validate_on_submit():
+        name = form.username.data
+        email = form.email.data
+        hash_psw = generate_password_hash(form.password.data)
+        res = dbase.adduser(name, email, hash_psw)
+        if res:
+            flash('You have successfully registered', category='success')
+            return redirect(url_for('login'))
         else:
             flash('Data entered incorrectly', category='error')
-
-    return render_template('registration.html', title='Registration', menu=dbase.menu())
+    return render_template('registration.html', title='Registration', menu=dbase.menu(), form=form)
+    # ============================================================================================
+    # if request.method == 'POST':
+    #     if len(request.form['username']) > 2 and request.form['password'] == request.form['repassword']:
+    #         name = request.form['username']
+    #         email = request.form['email']
+    #         hash_psw = generate_password_hash(request.form['password'])
+    #         res = dbase.adduser(name, email, hash_psw)
+    #         if res:
+    #             session['username'] = request.form['username']
+    #             print(session['username'])
+    #             return redirect(url_for('profile', name=session['username']))
+    #         else:
+    #             flash('Email exists or password introduced incorrectly', category='error')
+    #     else:
+    #         flash('Data entered incorrectly', category='error')
+    #
+    # return render_template('registration.html', title='Registration', menu=dbase.menu())
 
 
 @app.route("/logout")
