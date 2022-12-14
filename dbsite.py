@@ -10,6 +10,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from UserLogin import UserLogin
 from forms import LoginForm, RegistrForm
+from admin.admin import admin
 
 load_dotenv(find_dotenv())
 DATABASE = '/tmp/fldb.db'
@@ -25,6 +26,7 @@ app.debug = True
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'fldb.db')))
 app.config['MAX_CONTENT_LENGTH'] = 1024 * 1024
+app.register_blueprint(admin, url_prefix='/admin')
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message = 'Please log in to access this page.'
