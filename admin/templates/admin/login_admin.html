@@ -1,0 +1,19 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block context %}
+<h1>Login</h1>
+{% for cat, msg in get_flashed_messages(True) %}
+<div class="msg {{cat}}">{{ msg }}</div>
+{% endfor %}
+<form action="" method="post">
+    <div class="main">
+    <div class="mess"><label>Username:</label> <input type="text" name="name" value="" required></div>
+    <div class="messe"><label>Password:</label> <input type="text" name="psw" value="" required></div>
+    <div class="checkb"><input type="checkbox" name="rememberme">Remember me</div>
+    <div class="sub"><input type="submit" value="login"></div>
+    <hr>
+    <div class="reg"><a href="{{ url_for('registration') }}">Registration</a></div>
+    </div>
+</form>
+
+{% endblock %}

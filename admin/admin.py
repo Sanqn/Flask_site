@@ -3,32 +3,51 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 admin = Blueprint('admin', __name__, template_folder='templates', static_folder='static')
 
 
-def login_admin():
-    session['admin_logged'] = 1
+def login_admin(name):
+    session['admin_logged'] = name
+
 
 def is_login():
     return True if session.get('admin_logged') else False
 
-def logout():
+
+def logout_admin():
     session.pop('admin_logged', None)
 
-
+menu = [
+    {'url': '.index', 'title': 'Admin panel'},
+    {'url': '.logout', 'title': 'Logout'},
+]
 
 @admin.route('/')
 def index():
-    return 'admin'
+    if not is_login():
+        return redirect(url_for('.login'))
+    return render_template('admin/index.html', menu=menu, title='Admin panel')
 
 
 @admin.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        if request.form['name'] == 'Admin' and request.form['psw'] == 'admin':
-            login_admin()
-            flash('User login', category='success')
-            return redirect(url_for('.index'))
+    if is_login():
+        print(request.headers)
+        return redirect(url_for('.index', name=session['admin_logged']))
+    elif request.method == 'POST':
+        if request.form['name'] == 'Nick' and request.form['psw'] == 'admin':
+            name = request.form['name']
+            login_admin(name)
+            return redirect(url_for('.index', name=session['admin_logged']))
         else:
             flash('incorrect login/password', category='error')
     return render_template('admin/login_admin.html', title='Admin_panel')
+
+
+@admin.route('/logout')
+def logout():
+    if not is_login():
+        return redirect(url_for('.login'))
+    logout_admin()
+    flash('User logout', category='success')
+    return redirect(url_for('.login'))
 
 
 @admin.errorhandler(404)
