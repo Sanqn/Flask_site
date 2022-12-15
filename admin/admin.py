@@ -32,7 +32,7 @@ def login():
         print(request.headers)
         return redirect(url_for('.index', name=session['admin_logged']))
     elif request.method == 'POST':
-        if request.form['name'] == 'Nick' and request.form['psw'] == 'admin':
+        if request.form['name'] == 'Alex' and request.form['psw'] == 'admin':
             name = request.form['name']
             login_admin(name)
             return redirect(url_for('.index', name=session['admin_logged']))
