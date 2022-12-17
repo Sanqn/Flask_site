@@ -53,9 +53,10 @@ def create_table():
 
 
 def get_db():
-    if not hasattr(g, 'link_db'):
-        g.link_db = connect_db()
-    return g.link_db
+    if not hasattr(g, 'con_db'):
+        g.con_db = connect_db()
+        print(g.con_db, '00000000000000000000000000000000000000000000000000000000000000000000000000000000000')
+    return g.con_db
 
 
 def insert_data_in_table():
@@ -86,7 +87,7 @@ def before_request():
 
 @app.teardown_appcontext
 def close_connection(exception):
-    db = getattr(g, 'link_db', None)
+    db = getattr(g, 'con_db', None)
     if db is not None:
         db.close()
 

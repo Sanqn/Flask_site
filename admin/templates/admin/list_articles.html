@@ -1,0 +1,13 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block context %}
+<h1>{{ title }}</h1>
+<ul class="listpost">
+{% for article in list_articles %}
+<h2>{{ article.title }}</h2>
+<li><a href="{{ url_for('post', url_post=article.url) }}">{{ article.url }}</a></li>
+<p>{{ article.time }}</p>
+<hr>
+{% endfor %}
+</ul>
+{% endblock %}

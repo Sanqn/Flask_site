@@ -1,0 +1,14 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block context %}
+<h1>{{ title }}</h1>
+<h2>Information of users</h2>
+<ul class="listpost">
+{% for user in list_users %}
+<h2>User name: {{ user.name }}</h2>
+<p>User email: {{ user.email }}</p>
+<p>Post created: {{ user.time }}</p>
+<hr>
+{% endfor %}
+</ul>
+{% endblock %}
